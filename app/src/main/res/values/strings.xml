@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">applicaciontarea</string>
+    <string name="strBtnAgregar">Agregar</string>
+    <string name="strBtnGuardar">Guardar</string>
+    <string name="hntUsuario">Usuario</string>
+    <string name="hntEmail">E-mail</string>
+    <string name="hntTwitter">Twitter</string>
+    <string name="hntNumTel">Numero de telefono</string>
+    <string name="hntFecNac">Fecha de nacimiento</string>
+</resources>
