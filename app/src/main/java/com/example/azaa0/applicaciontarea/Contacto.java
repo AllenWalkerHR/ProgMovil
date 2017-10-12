@@ -6,31 +6,49 @@ import java.io.Serializable;
  * Created by azaa0 on 06/09/2017.
  */
 @SuppressWarnings("serial")
-public class Contacto implements Serializable{
-    private String usuario;
-    private String twitter;
-    private String email;
-    private String phone;
-    private String fechaNac;
+public class Contacto  implements Serializable {
+    int id;
+    String nombre;
+    String correo_electronico;
+    String twitter;
+    String telefono;
+    String fecha_nacimiento;
 
-    public Contacto(String usuario, String twitter, String email, String phone, String fechaNac) {
-        this.usuario = usuario;
+    public Contacto() {
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public Contacto(int id, String nombre, String correo_electronico, String twitter, String telefono, String fecha_nacimiento) {
+        this.id = id;
+        this.nombre = nombre;
+        this.correo_electronico = correo_electronico;
         this.twitter = twitter;
-        this.email = email;
-        this.phone = phone;
-        this.fechaNac = fechaNac;
+        this.telefono = telefono;
+        this.fecha_nacimiento = fecha_nacimiento;
     }
 
-    public Contacto(){
+    public void setId(int id) {
+        this.id = id;
 
     }
 
-    public String getUsuario() {
-        return usuario;
+    public String getNombre() {
+        return nombre;
     }
 
-    public void setUsuario(String usuario) {
-        this.usuario = usuario;
+    public void setNombre(String nombre) {
+        this.nombre = nombre;
+    }
+
+    public String getCorreo_electronico() {
+        return correo_electronico;
+    }
+
+    public void setCorreo_electronico(String correo_electronico) {
+        this.correo_electronico = correo_electronico;
     }
 
     public String getTwitter() {
@@ -41,27 +59,26 @@ public class Contacto implements Serializable{
         this.twitter = twitter;
     }
 
-    public String getEmail() {
-        return email;
+    public String getTelefono() {
+        return telefono;
     }
 
-    public void setEmail(String email) {
-        this.email = email;
+    public void setTelefono(String telefono) {
+        this.telefono = telefono;
     }
 
-    public String getPhone() {
-        return phone;
+    public String getFecha_nacimiento() {
+        return fecha_nacimiento;
     }
 
-    public void setPhone(String phone) {
-        this.phone = phone;
+    public void setFecha_nacimiento(String fecha_nacimiento) {
+        this.fecha_nacimiento = fecha_nacimiento;
     }
 
-    public String getFechaNac() {
-        return fechaNac;
-    }
 
-    public void setFechaNac(String fechaNac) {
-        this.fechaNac = fechaNac;
+    @Override
+    public String toString() {
+        return "\nID:" + this.id + "\nNombre:" + this.nombre + "\nCorreo:" + this.correo_electronico + "\nTwiter:" + this.twitter + "\nTelefono:" + this.telefono + "\nFecha_nac:" + this.fecha_nacimiento + "\n";
     }
 }
+

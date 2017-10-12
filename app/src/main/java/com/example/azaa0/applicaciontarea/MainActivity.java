@@ -4,12 +4,17 @@ import android.content.Intent;
 import android.content.res.Resources;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Adapter;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -17,90 +22,119 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
-    Button btnAgregar;
-    ListView ldv;
-    Intent i;
+    ListView lista;
+    TextView txtbuscar;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        ldv=(ListView) findViewById(R.id.listView);
-        btnAgregar=(Button) findViewById(R.id.btnAgregar);
 
-        btnAgregar.setOnClickListener(new View.OnClickListener() {
+
+        lista =(ListView)findViewById(R.id.listView);
+
+
+        cargardatos();
+        busqueda();
+    }
+
+    public void busqueda(){
+        txtbuscar=(TextView)findViewById(R.id.txtbuscar);
+
+        txtbuscar.addTextChangedListener(new TextWatcher() {
             @Override
-            public void onClick(View v) {
-                 i= new Intent(getApplication(),otraactividad.class);
-               // i.putStringArrayListExtra("arr",list);
-                startActivityForResult(i,2);
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                if(txtbuscar.getText().length()==0){
+                    cargardatos();
+                }else{
+                    buscar(txtbuscar.getText().toString());
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+
             }
         });
-        Contacto contacto = new Contacto("AllenWalker", "@allenwalker_hCR","allenwalkerhr@mail.com","5553902281","4/11/96");
-        cargarListView(contacto);
-
-
 
 
     }
-    ArrayList <String> list=new ArrayList<>();
-    ArrayList <Contacto> list2=new ArrayList<>();
+
+    ArrayAdapter<Contacto> adp;
+    public void cargardatos(){
+        DaoContactos dao = new DaoContactos(MainActivity.this);
+        adp = new ArrayAdapter<Contacto>(MainActivity.this,
+                android.R.layout.simple_list_item_1,dao.getAllStudentsList());
+        lista.setAdapter(adp);
+    }
+
+    public void buscar(String cad){
+        DaoContactos dao = new DaoContactos(MainActivity.this);
+        ArrayAdapter<Contacto> adp = new ArrayAdapter<Contacto>(MainActivity.this,
+                android.R.layout.simple_list_item_1,dao.buscarcontacto(cad));
+
+        lista.setAdapter(adp);
+    }
+
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (RESULT_OK == resultCode)
+
+
+        if (resultCode==RESULT_OK)
         {
-            Contacto objeto;
-            objeto= (Contacto) data.getExtras().getSerializable("contacto");
+
             try {
-                cargarListView(objeto);
-            }catch (Exception ex) {}
+
+                //obtener el objeto contacto
+                Contacto objcontacto = (Contacto) data.getSerializableExtra("c");
+
+                DaoContactos dao = new DaoContactos(MainActivity.this);
+                if(dao.insert(new Contacto(0,objcontacto.getNombre(),objcontacto.getCorreo_electronico(),objcontacto.getTwitter(),objcontacto.getTelefono(),objcontacto.getFecha_nacimiento()))>0) {
+                    Toast.makeText(getBaseContext(), "Contacto Insertado", Toast.LENGTH_SHORT).show();
+
+                }else{
+                    Toast.makeText(getBaseContext(), "No se pudo Insertar el Contacto", Toast.LENGTH_SHORT).show();
+                }
+
+                cargardatos();
+
+            }catch (Exception err){
+                Toast.makeText(getBaseContext(),err.getMessage(),Toast.LENGTH_LONG).show();
+            }
 
         }
-        else
-        {
+    }
 
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+
+        if (id == R.id.insertar) {
+            Intent siguiente = new Intent(getApplication(),otraactividad.class);
+            startActivityForResult(siguiente,1000);
+            cargardatos();
+            return true;
         }
-    }
-    public void cargarListView(Contacto objeto){
-        list.add(objeto.getUsuario()+"\n"+objeto.getEmail());
-        ArrayAdapter adp = new ArrayAdapter(this, android.R.layout.simple_list_item_1, list);
-        ldv.setAdapter(adp);
-    }
 
-    @Override
-    protected void onStart() {
-        super.onStart();
-        Log.d("CICLO", "Paso por el metodo onStart()");
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        Log.i("CICLO", "Paso por el metodo onResume(), puedes interactuar");
-
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        Log.w("CICLO", "Paso por el metodo onPause(), No esta visible la actividad");
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-        Log.d("CICLO", "Paso por el metodo onStop(), puede que se destruya la actividad");
+        return super.onOptionsItemSelected(item);
     }
 
     @Override
     protected void onRestart() {
         super.onRestart();
-        Log.v("CICLO", "Paso por el metodo onRestart(), resucito la actividad");
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        Log.e("CICLO", "Paso por el metodo onDestroy(), lo sentimos! Actividad destruida");
+        cargardatos();
     }
 }
